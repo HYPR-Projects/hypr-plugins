@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "Plugins oficiais da HYPR para Claude",
-    "version": "0.8.0"
+    "version": "0.8.1"
   },
   "plugins": [
     {
       "name": "hypr-audiences",
       "source": "./plugins/hypr-audiences",
       "description": "Catálogo de audiências de localização da HYPR: busca, volumetria e planos de audiência para anunciantes.",
-      "version": "0.8.0",
+      "version": "0.8.1",
       "author": {
         "name": "HYPR"
       },

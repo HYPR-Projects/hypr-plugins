@@ -46,3 +46,6 @@ Park (1), Beach (1)
 
 ## Industry (1)
 Manufacturing (1)
+
+## Lifestyle & Demographics (audiências sob medida, type Custom)
+Categoria das audiências construídas em planos anteriores da HYPR que não são visitação de um tipo de lugar, e sim composições de comportamento e perfil. Subcategorias: Premium & Luxury, Residential Profile, Families & Parents, Gen Z & Young Adults, Demographic Profile, Interests & Behavior. Audiências Custom também aparecem dentro das outras categorias (ex.: Retail / Competitor Visitors, Services / Business & Professionals, Industry / Agribusiness, Services / Religion) quando a composição aponta para um tipo de lugar.

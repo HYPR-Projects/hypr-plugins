@@ -10,6 +10,10 @@ Se faltar marca E categoria, pergunte em uma linha antes de seguir. Se faltar s�
 Chame `rank_audiences` com os campos do briefing: `brand`, `category`, `product`, `objective`, `target_audience`, `keywords` (concorrentes, ocasiões, lugares) e `notes` (praça, período, verba, KPIs). Use `limit` 25 e `include_description` true.
 Se precisar de mais opções num ângulo específico, complemente com `search_audiences`, mas só inclua no plano audiências que tenham `brand_affinity` vindo do `rank_audiences`.
 
+O catálogo tem dois tipos de audiência (campo `type`):
+- **Location**: audiência de visitação, ativável como está (tem `addresses_count`).
+- **Custom** (`segment_name` com prefixo `LIB_`): audiência sob medida que o time HYPR já construiu em planos anteriores (Cluster Premium, Gated communities, Self Care, Frequent travelers…). O volume é a estimativa do plano original, a composição está na descrição e o time recria sob demanda a partir do Places Graph. No plano, marque essas com "(sob medida)" ao lado do nome e some no resumo quantas são.
+
 A resposta traz três coisas além do ranking:
 - `vertical`: a vertical que o conector inferiu para o briefing. Se estiver errada ou nula, repita a chamada com `category` mais explícita.
 - `library_evidence` em cada audiência: em quantos planos reais da HYPR Library ela já entrou (`planos`, `planos_na_vertical`, `clientes`). É a prova de que o time de planejamento já validou a audiência nesse tipo de cliente. Use na coluna "Por que entra" sempre que existir (ex.: "já usada em 13 planos de bancos: Itaú, Nubank, BTG").
