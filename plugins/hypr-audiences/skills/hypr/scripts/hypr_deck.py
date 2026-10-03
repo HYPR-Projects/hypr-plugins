@@ -341,7 +341,7 @@ class Deck:
         p = self.p
         s = self.slide(False, "03 Plataforma · Mensuração", "Como provar")
         self.mono(s, "revIQ · powered by Groundflow", MX, Inches(1.3), Inches(5), 6.5, MUTED)
-        self.text(s, p.get("measurement_title") or "Não é alcance. É *diferença mensurada*.", MX, Inches(1.55), Inches(10), Inches(0.8), 32, INK, F_LIGHT)
+        self.text(s, p.get("measurement_title") or "A campanha virou *venda na loja*? E quanto.", MX, Inches(1.55), Inches(10), Inches(0.8), 32, INK, F_LIGHT)
         self.text(s, p.get("measurement") or "Comparamos o consumo nos pontos de venda das regiões expostas à campanha com regiões equivalentes não expostas, e medimos o incremento no SKU anunciado e na categoria.", MX, Inches(2.5), Inches(5.6), Inches(1.6), 13, BODY, F_REG, line_spacing=1.4)
         steps = p.get("measurement_steps") or [("Linha de base", "Vendas do SKU e da categoria antes do flight, região a região."), ("Exposto vs. controle", "Regiões impactadas comparadas a regiões equivalentes sem campanha."), ("Incremento", "A diferença entre os grupos é o efeito atribuível à mídia.")]
         cw = (W - 2 * MX - Inches(0.8)) / 3; y = Inches(4.55)
