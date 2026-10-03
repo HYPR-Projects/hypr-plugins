@@ -19,26 +19,35 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ASSETS = os.path.join(HERE, "..", "assets")
 
 # ---- Tokens (decks HYPR FY26) ----
-DARK = RGBColor(0x14, 0x1B, 0x21)       # fundo escuro dos decks Audience Discovery
-DARK2 = RGBColor(0x1B, 0x26, 0x2F)      # painéis escuros
-LIGHT = RGBColor(0xFA, 0xFA, 0xFA)
-CARD = RGBColor(0xF1, 0xF3, 0xF4)
-CARD_BLUE = RGBColor(0xE9, 0xF3, 0xF7)
-LINE = RGBColor(0xE2, 0xE6, 0xE9)
-BLUE = RGBColor(0x4F, 0xA8, 0xCF)
-BLUE_DEEP = RGBColor(0x33, 0x97, 0xB9)
-INK = RGBColor(0x1B, 0x26, 0x2F)
-BODY = RGBColor(0x55, 0x66, 0x70)
-MUTED = RGBColor(0x8A, 0x9A, 0xA4)
-MUTED_DARK = RGBColor(0x6E, 0x7E, 0x88)
-WHITE = RGBColor(0xFF, 0xFF, 0xFF)
+# ---- Tokens oficiais (HYPR Design System "Own the Journey 2026") ----
+DARK = RGBColor(0x1C, 0x26, 0x2F)       # midnight: capa, divisórias, destaque
+DARK2 = RGBColor(0x24, 0x30, 0x3A)      # painel sobre midnight
+LIGHT = RGBColor(0xFA, 0xFA, 0xFA)      # cloud: único fundo claro
+CARD = RGBColor(0xE5, 0xEB, 0xF2)       # mist: cards, tags
+CARD_BLUE = RGBColor(0xC5, 0xEA, 0xF6)  # cyan-soft: card destacado
+LINE = RGBColor(0xE0, 0xE3, 0xE6)       # hairline rgba(28,38,47,.12) sobre cloud
+LINE_STRONG = RGBColor(0xCE, 0xD3, 0xD7)
+BLUE = RGBColor(0x33, 0x97, 0xB9)       # cyan: uma palavra por título
+BLUE_DEEP = RGBColor(0x24, 0x6C, 0x84)
+INK = RGBColor(0x1C, 0x26, 0x2F)
+BODY = RGBColor(0x53, 0x68, 0x72)       # slate
+MUTED = RGBColor(0x78, 0x90, 0x9C)      # steel
+MUTED_DARK = RGBColor(0x78, 0x90, 0x9C)
+WHITE = RGBColor(0xFC, 0xFE, 0xFE)      # offwhite: texto sobre midnight
 SOFT = RGBColor(0xC9, 0xD2, 0xDB)
 
-F_LIGHT, F_REG, F_MED, F_SEMI = "Montserrat Light", "Montserrat", "Montserrat Medium", "Montserrat SemiBold"
+F_LIGHT, F_REG, F_MED, F_SEMI = "Urbanist Light", "Urbanist", "Urbanist Medium", "Urbanist SemiBold"
 F_MONO = "IBM Plex Mono"
+# raios do DS (20px/14px/8px em frame 1920) convertidos para o slide de 13,333in
+R_LG, R_MD, R_SM = 20 / 1920 * 13.333, 14 / 1920 * 13.333, 8 / 1920 * 13.333
+EIXO_BY_LAYER = {"core": "Comportamento", "conquista": "Comportamento", "afinidade": "Afinidade", "expansao": "Lifestyle", "expansão": "Lifestyle", "proximidade": "Proximidade"}
 
 W, H = Inches(13.333), Inches(7.5)
-MX = Inches(0.75)
+MX = Inches(96 / 1920 * 13.333)   # margem horizontal do DS (96px em 1920)
+MY = Inches(64 / 1080 * 7.5)      # margem vertical (64px em 1080)
+TRACK_DISPLAY = -0.02             # tracking de display (em)
+GROWTH, GROWTH_DEEP, GROWTH_SOFT = RGBColor(0x4C, 0xB0, 0x50), RGBColor(0x01, 0x83, 0x76), RGBColor(0xE4, 0xEB, 0xA4)
+DECLINE, DECLINE_DEEP, DECLINE_SOFT = RGBColor(0xEA, 0x1E, 0x63), RGBColor(0xB4, 0x10, 0x48), RGBColor(0xFF, 0xBE, 0xBF)
 YEAR = str(datetime.date.today().year)
 
 
@@ -51,6 +60,11 @@ def fmt_vol(v, short=False):
     if v >= 1e3:
         return (f"{v/1e3:.0f}", "k") if short else f"{v/1e3:.0f} mil"
     return (f"{v:.0f}", "") if short else f"{v:.0f}"
+
+
+def norm(t):
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", str(t)) if unicodedata.category(c) != "Mn").lower().strip()
 
 
 def fmt_int(v):
@@ -83,7 +97,8 @@ class Deck:
             r.font.size = Pt(size); r.font.name = font
             r.font.color.rgb = BLUE if i % 2 else color
             if spacing is not None:
-                r._r.get_or_add_rPr().set("spc", str(int(spacing * 100)))
+                sp = spacing * size if abs(spacing) < 0.2 else spacing   # <0.2 = em; senão pt
+                r._r.get_or_add_rPr().set("spc", str(int(sp * 100)))
         if align is not None: para.alignment = align
 
     def text(self, s, text, x, y, w, h, size, color, font=F_REG, align=None, lines=None, line_spacing=1.15, anchor=MSO_ANCHOR.TOP, spacing=None):
@@ -102,7 +117,7 @@ class Deck:
     def rect(self, s, x, y, w, h, fill, radius=None, line=None, lw=0.75):
         shp = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE if radius else MSO_SHAPE.RECTANGLE, x, y, w, h)
         if radius:
-            shp.adjustments[0] = min(0.5, radius * 914400 / min(w, h)) if radius > 1 else radius
+            shp.adjustments[0] = min(0.5, Inches(radius) / min(w, h)) if radius > 0.5 else radius
         if fill is None: shp.fill.background()
         else: shp.fill.solid(); shp.fill.fore_color.rgb = fill
         if line is not None: shp.line.color.rgb = line; shp.line.width = Pt(lw)
@@ -126,33 +141,43 @@ class Deck:
         return w
 
     def tag_box(self, s, text, x, y, w, h=Inches(0.42), dark=False):
-        shp = self.rect(s, x, y, w, h, None, radius=0.08, line=DARK_LINE if dark else LINE)
+        shp = self.rect(s, x, y, w, h, None, radius=R_MD, line=DARK_LINE if dark else LINE_STRONG)
         tf = shp.text_frame; tf.vertical_anchor = MSO_ANCHOR.MIDDLE; tf.word_wrap = False
         tf.margin_top = tf.margin_bottom = 0
         self._run(tf.paragraphs[0], text.upper(), 7, WHITE if dark else INK, F_SEMI, PP_ALIGN.CENTER, 0.4)
+
+    def figure_slot(self, s, x, y, w, h, caption):
+        """Espaço reservado para foto (DS): moldura hairline raio 20, dois ticks de canto, uma legenda mono."""
+        self.rect(s, x, y, w, h, None, radius=R_LG, line=LINE_STRONG)
+        t = Inches(0.22); c = LINE_STRONG
+        for (cx, cy, dx, dy) in [(x + Inches(0.3), y + Inches(0.3), 1, 1), (x + w - Inches(0.3), y + h - Inches(0.3), -1, -1)]:
+            self.hline(s, cx if dx > 0 else cx - t, cy, t, c)
+            ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, cx, cy if dy > 0 else cy - t, cx, cy + t if dy > 0 else cy)
+            ln.line.color.rgb = c; ln.line.width = Pt(0.75)
+        self.mono(s, caption, x + Inches(0.3), y + h - Inches(0.6), w - Inches(0.6), 6, MUTED)
 
     # ---------- chrome ----------
     def slide(self, dark, tag, footer_mid, footer_left=None):
         s = self.prs.slides.add_slide(self.blank); self.n += 1
         bg = s.background.fill; bg.solid(); bg.fore_color.rgb = DARK if dark else LIGHT
         fg = WHITE if dark else INK
-        self.pill(s, tag, MX, Inches(0.42), None, line=(MUTED_DARK if dark else LINE), color=(SOFT if dark else BODY), size=6, dot=True, h=Inches(0.24))
+        self.pill(s, tag, MX, MY, None, line=(MUTED_DARK if dark else LINE_STRONG), color=(SOFT if dark else INK), size=6, dot=True, h=Inches(0.24))
         logo = os.path.join(ASSETS, "hypr_white.png" if dark else "hypr_dark.png")
-        s.shapes.add_picture(logo, W - MX - Inches(1.05), Inches(0.44), width=Inches(1.05))
-        fl = footer_left or "• HYPR Audiences"
+        s.shapes.add_picture(logo, W - MX - Inches(1.0), MY + Inches(0.02), width=Inches(1.0))
+        fl = footer_left or "▪ FY26 Oficial"
         fc = MUTED_DARK if dark else MUTED
-        self.mono(s, fl, MX, H - Inches(0.52), Inches(3), 5.5, fc)
-        self.mono(s, footer_mid, Inches(4.5), H - Inches(0.52), Inches(4.33), 5.5, fc, align=PP_ALIGN.CENTER)
-        self.mono(s, f"Nacional · {YEAR}", W - MX - Inches(3), H - Inches(0.52), Inches(3), 5.5, fc, align=PP_ALIGN.RIGHT)
+        self.mono(s, fl, MX, H - MY - Inches(0.1), Inches(4), 5.5, fc)
+        self.mono(s, footer_mid, Inches(4.5), H - MY - Inches(0.1), Inches(4.33), 5.5, fc, align=PP_ALIGN.CENTER)
+        self.mono(s, self.p.get("footer_right") or f"{self.p.get('region', 'Nacional')} · {YEAR}", W - MX - Inches(3), H - MY - Inches(0.1), Inches(3), 5.5, fc, align=PP_ALIGN.RIGHT)
         return s
 
     # ---------- slides ----------
     def cover(self):
         p = self.p
-        s = self.slide(True, p.get("cover_tag", "Audience Discovery · " + YEAR), "Capa", "• FY26 Oficial")
-        self.mono(s, f"01  {p['brand']}  ·  Audience Discovery", MX, Inches(3.25), Inches(8), 7, BLUE)
+        s = self.slide(True, p.get("cover_tag", "Audience Discovery · " + YEAR), "Capa", "▪ FY26 Oficial")
+        self.mono(s, p.get("cover_kicker") or f"{p['brand']}  ·  Audience Discovery", MX, Inches(3.25), Inches(8), 7, BLUE)
         title = p.get("cover_title") or f"Audiências para *{p['brand']}*."
-        self.text(s, title, MX, Inches(3.55), Inches(11.5), Inches(1.9), 60, WHITE, F_LIGHT, line_spacing=1.0)
+        self.text(s, title, MX, Inches(3.55), Inches(11.5), Inches(1.9), 54, WHITE, F_LIGHT, line_spacing=1.0, spacing=TRACK_DISPLAY)
         sub = p.get("subtitle") or p.get("campaign", "")
         self.text(s, sub, MX, Inches(5.5), Inches(9), Inches(0.5), 15, SOFT, F_REG)
         meta = p.get("cover_meta") or " · ".join(x for x in [p.get("campaign_type", "Plano de audiências"), p.get("vertical", ""), p.get("region", "Nacional")] if x)
@@ -161,7 +186,7 @@ class Deck:
     def summary(self, sections):
         s = self.slide(False, "00 Sumário", "Sumário")
         self.mono(s, f"Índice   {len(sections):02d} seções", MX, Inches(3.15), Inches(4), 6.5, MUTED)
-        self.text(s, "O que preparamos\npara *vocês*.", MX, Inches(3.45), Inches(5.5), Inches(1.6), 38, INK, F_LIGHT, line_spacing=1.05)
+        self.text(s, "O que preparamos\npara *vocês*.", MX, Inches(3.45), Inches(5.5), Inches(1.6), 36, INK, F_LIGHT, line_spacing=1.05, spacing=TRACK_DISPLAY)
         x, y, w = Inches(6.6), Inches(2.1), Inches(6)
         rh = Inches(0.62)
         self.hline(s, x, y, w)
@@ -172,9 +197,9 @@ class Deck:
             self.hline(s, x, yy + rh, w)
 
     def divider(self, num, title, sub):
-        s = self.slide(True, "Audience Discovery · " + YEAR, f"Seção {num:02d}", "• FY26 Oficial")
-        self.text(s, f"{num:02d}", MX, Inches(1.9), Inches(5), Inches(1.9), 110, BLUE, F_LIGHT, line_spacing=0.9)
-        self.text(s, f"{title}*.*", MX, Inches(3.95), Inches(10), Inches(1.1), 56, WHITE, F_LIGHT)
+        s = self.slide(True, "Audience Discovery · " + YEAR, f"Seção {num:02d}", "▪ FY26 Oficial")
+        self.text(s, f"{num:02d}", MX, Inches(2.0), Inches(5), Inches(1.9), 96, BLUE, F_LIGHT, line_spacing=0.9, spacing=TRACK_DISPLAY)
+        self.text(s, f"{title}*.*", MX, Inches(3.95), Inches(10), Inches(1.1), 54, WHITE, F_LIGHT, spacing=TRACK_DISPLAY)
         self.text(s, sub, MX, Inches(5.15), Inches(8), Inches(0.9), 16, SOFT, F_REG, line_spacing=1.3)
 
     def context(self):
@@ -218,7 +243,7 @@ class Deck:
         for i, l in enumerate(layers):
             x = MX + i * (cw + gap)
             hi = (i == 0)
-            self.rect(s, x, y, cw, ch, CARD_BLUE if hi else None, radius=0.08, line=None if hi else LINE)
+            self.rect(s, x, y, cw, ch, CARD if hi else None, radius=R_LG, line=None if hi else LINE_STRONG)
             self.mono(s, f"{i+1:02d} · {l['name']}", x + Inches(0.3), y + Inches(0.3), cw, 6.5, BLUE if hi else MUTED)
             self.text(s, l.get("headline") or l["name"], x + Inches(0.3), y + Inches(0.6), cw - Inches(0.5), Inches(0.7), 15, INK, F_REG, line_spacing=1.15)
             self.text(s, l.get("description", ""), x + Inches(0.3), y + Inches(1.3), cw - Inches(0.55), Inches(1.2), 9.5, BODY, F_REG, line_spacing=1.35)
@@ -229,71 +254,72 @@ class Deck:
 
     def audience_card(self, a, idx, total):
         p = self.p
-        s = self.slide(False, f"{p['brand']} · Audiência {idx:02d}/{total:02d}", "HYPR Special Audiences", "• Estimativas HYPR")
+        s = self.slide(False, f"Principais audiências · {idx:02d}/{total:02d}", "Audiências propostas", "▪ Fontes: HYPR Audiences · estimativas")
         # painel esquerdo
         px, py, pw, ph = MX, Inches(1.3), Inches(4.9), Inches(5.35)
         img = a.get("image")
         if img and os.path.exists(img):
-            pic = s.shapes.add_picture(img, px, py, width=pw, height=ph)
-            pic.crop_left = pic.crop_right = 0
+            s.shapes.add_picture(img, px, py, width=pw, height=ph)
         else:
-            self.rect(s, px, py, pw, ph, DARK2, radius=0.08)
-            self.pill(s, "HYPR Special Audiences", px + Inches(0.35), py + Inches(0.35), None, line=MUTED_DARK, color=SOFT, size=5.5, h=Inches(0.22))
-            self.text(s, split_title(a["name"]), px + Inches(0.35), py + Inches(0.8), pw - Inches(0.7), Inches(1.6), 26, WHITE, F_LIGHT, line_spacing=1.05)
-            self.mono(s, f"{a.get('main_category','')}  ·  {a.get('sub_category','')}", px + Inches(0.35), py + Inches(2.45), pw - Inches(0.7), 6, MUTED_DARK, h=Inches(0.4))
-            # badge numérico
-            self.rect(s, px + pw - Inches(1.05), py + ph - Inches(1.05), Inches(0.7), Inches(0.7), None, radius=0.08, line=MUTED_DARK)
-            self.text(s, f"{idx:02d}", px + pw - Inches(1.05), py + ph - Inches(0.95), Inches(0.7), Inches(0.5), 16, WHITE, F_LIGHT, align=PP_ALIGN.CENTER)
-            self.mono(s, a.get("layer", ""), px + Inches(0.35), py + ph - Inches(0.65), Inches(2.5), 6, BLUE)
-        # coluna direita
+            self.figure_slot(s, px, py, pw, ph, a.get("image_caption") or f"[ {norm(a.get('sub_category') or 'foto').replace('&', '·')} · pdv ]")
+        # coluna direita (slots 02 a 08 do contrato Audience Discovery)
         x = Inches(6.1); w = W - MX - x
-        self.mono(s, a.get("layer", "Audiência").upper() + "      ", x, Inches(1.3), Inches(2), 6, MUTED)
-        self.mono(s, a.get("sub_category", ""), x + Inches(1.6), Inches(1.3), Inches(4), 6, BLUE)
+        eixo = a.get("eixo") or EIXO_BY_LAYER.get(norm(a.get("layer", "")), "Comportamento")
+        self.mono(s, eixo, x, Inches(1.3), Inches(2.2), 6, MUTED)
+        self.mono(s, a.get("cluster") or a.get("sub_category", ""), x + Inches(1.9), Inches(1.3), Inches(4.5), 6, BLUE)
         tl = len(re.sub(r"\s*\(base \d\)$", "", a["name"]))
         self.text(s, split_title(a["name"]), x, Inches(1.55) if tl <= 34 else Inches(1.6), w, Inches(0.7), 30 if tl <= 26 else (24 if tl <= 34 else 20), INK, F_LIGHT)
         self.hline(s, x, Inches(2.3), w)
-        # número grande
+        # slot 04: devices estimados + praça
         num, suf = fmt_vol(a.get("volume"), short=True)
         tb = self.text(s, num, x, Inches(2.45), Inches(2.6), Inches(0.9), 48, INK, F_LIGHT)
-        r = tb.text_frame.paragraphs[0].add_run(); r.text = suf; r.font.size = Pt(22); r.font.name = F_LIGHT; r.font.color.rgb = INK
-        nx = x + Inches(0.75) * len(num) + Inches(0.55)
-        self.mono(s, "Usuários\nestimados", nx, Inches(2.75), Inches(1.2), 5.5, MUTED, h=Inches(0.4))
-        self.pill(s, p.get("region", "Nacional"), nx + Inches(1.15), Inches(2.72), CARD, None, INK, 7, F_MED, h=Inches(0.28))
-        # três stats
-        stats = [(fmt_int(a.get("addresses")), "Endereços\nmapeados"), (f"{a.get('affinity', 0)}%", "Brand\nAffinity"), (f"#{a.get('rank', idx)}", f"no ranking\nde {len(self.all_auds)}")]
+        r = tb.text_frame.paragraphs[0].add_run(); r.text = suf; r.font.size = Pt(20); r.font.name = F_LIGHT; r.font.color.rgb = INK
+        nx = x + Inches(0.62) * len(num) + Inches(0.6)
+        self.mono(s, "Devices\nestimados", nx, Inches(2.75), Inches(1.2), 5.5, MUTED, h=Inches(0.4))
+        self.pill(s, a.get("praca") or p.get("region", "Nacional"), nx + Inches(1.15), Inches(2.72), CARD, None, INK, 7, F_MED, h=Inches(0.28))
+        # slot 05: três contagens de endereços por place (se o plano trouxer); senão endereços + affinity + ranking
+        places = a.get("places") or []
+        if len(places) >= 3:
+            stats = [(fmt_int(pl.get("n")), pl.get("l", "")) for pl in places[:3]]
+        else:
+            stats = [(fmt_int(a.get("addresses")), "Endereços\nmapeados"), (f"{a.get('affinity', 0)}%", "Brand\nAffinity"), (f"#{a.get('rank', idx)}", f"no ranking\nde {len(self.all_auds)}")]
         sw = Inches(2.1); sy = Inches(3.45)
         for i, (v, lab) in enumerate(stats):
             sx = x + i * sw
-            if i: self.rect(s, sx - Inches(0.25), sy + Inches(0.05), Emu(9525), Inches(0.75), LINE)
+            if i: self.rect(s, sx - Inches(0.25), sy + Inches(0.05), Emu(9525), Inches(0.75), LINE_STRONG)
             self.text(s, v, sx, sy, sw, Inches(0.5), 24, BLUE, F_LIGHT)
             self.mono(s, lab, sx, sy + Inches(0.5), sw, 5.5, MUTED, h=Inches(0.4))
-        # tags
+        # slot 06: hooks (duas tags com +)
         tx, ty = x, Inches(4.45)
-        for t in (a.get("tags") or [])[:3]:
-            tx += self.pill(s, "+ " + t, tx, ty, CARD, None, BODY, 7, F_MED, h=Inches(0.28)) + Inches(0.1)
-        # citação
-        self.rect(s, x, Inches(4.95), Emu(19050), Inches(0.75), BLUE)
+        for t in (a.get("tags") or a.get("hooks") or [])[:2]:
+            tx += self.pill(s, "+ " + t, tx, ty, CARD, None, INK, 7, F_MED, h=Inches(0.28)) + Inches(0.1)
+        # slot 07: texto curto (2 linhas) + loc
+        self.rect(s, x, Inches(4.95), Emu(19050), Inches(0.72), BLUE)
         quote = a.get("why") or a.get("description", "")
-        self.text(s, quote, x + Inches(0.25), Inches(4.93), w - Inches(0.3), Inches(0.8), 12.5, INK, F_REG, line_spacing=1.3)
-        self.mono(s, a.get("meta") or f"ID {a.get('id','')}", x + Inches(0.25), Inches(5.75), w, 6, MUTED)
-        # redes mapeadas / categorias
-        boxes = a.get("networks") or ([a["brand"]] if a.get("brand") else [])
-        if not boxes: boxes = [a.get("sub_category", ""), a.get("main_category", "")]
-        boxes = [b for b in boxes if b][:4]
-        if boxes:
-            self.mono(s, "Redes mapeadas" if a.get("networks") or a.get("brand") else "Categoria", x, Inches(6.05), w, 5.5, MUTED)
-            bw = (w - Inches(0.15) * (len(boxes) - 1)) / len(boxes) if len(boxes) > 1 else Inches(2.8)
-            bw = min(bw, Inches(3))
-            for i, b in enumerate(boxes):
-                self.tag_box(s, b, x + i * (bw + Inches(0.15)), Inches(6.27), bw, h=Inches(0.4))
+        if len(quote) > 150: quote = quote[:147].rsplit(" ", 1)[0] + "..."
+        self.text(s, quote, x + Inches(0.25), Inches(4.93), w - Inches(0.3), Inches(0.8), 12.5, INK, F_LIGHT, line_spacing=1.3)
+        self.text(s, a.get("profile") or a.get("meta") or f"ID {a.get('id','')}", x + Inches(0.25), Inches(5.72), w, Inches(0.25), 8.5, MUTED, F_REG)
+        # slot 08: redes mapeadas (até 4 tiles tipográficos; "off" = inventário não confirmado)
+        nets = a.get("networks") or ([a["brand"]] if a.get("brand") else [])
+        nets = [n for n in nets if n][:4]
+        if nets:
+            self.mono(s, "Redes mapeadas", x, Inches(6.05), w, 5.5, MUTED)
+            bw = (w - Inches(0.15) * 3) / 4
+            for i, n in enumerate(nets):
+                off = isinstance(n, dict) and n.get("off")
+                label = n["name"] if isinstance(n, dict) else n
+                shp = self.rect(s, x + i * (bw + Inches(0.15)), Inches(6.27), bw, Inches(0.4), None, radius=R_MD, line=LINE_STRONG)
+                if off: shp.line.dash_style = 4
+                tf = shp.text_frame; tf.vertical_anchor = MSO_ANCHOR.MIDDLE; tf.word_wrap = False; tf.margin_top = tf.margin_bottom = 0
+                self._run(tf.paragraphs[0], label.upper(), 7, MUTED if off else INK, F_SEMI, PP_ALIGN.CENTER, 0.4)
 
     def ranking_table(self, auds, part=None):
         p = self.p
-        s = self.slide(False, "02 Audiências · Ranking", "Audience ranking", "• Estimativas HYPR")
+        s = self.slide(False, "02 Audiências · Ranking", "Audience ranking", "▪ Fontes: HYPR Audiences · estimativas")
         self.text(s, (p.get("ranking_title") or "Ranking completo por *Brand Affinity*") + (f"  ·  {part}" if part else ""), MX, Inches(1.3), Inches(10), Inches(0.7), 28, INK, F_LIGHT)
         cx, cy, cw = MX, Inches(2.2), W - 2 * MX
         rh = Inches(0.37); ch = Inches(0.5) + rh * len(auds) + Inches(0.2)
-        self.rect(s, cx, cy, cw, ch, WHITE, radius=0.06, line=LINE)
+        self.rect(s, cx, cy, cw, ch, RGBColor(0xFF, 0xFF, 0xFF), radius=R_LG, line=LINE_STRONG)
         cols = [(Inches(0.3), Inches(0.5), "#"), (Inches(0.8), Inches(3.9), "Audiência"), (Inches(4.8), Inches(1.6), "Camada"), (Inches(6.4), Inches(1.5), "Volume"), (Inches(7.9), Inches(1.4), "Endereços"), (Inches(9.3), Inches(2.3), "Brand Affinity")]
         for ox, ow, lab in cols:
             self.text(s, lab, cx + ox, cy + Inches(0.17), ow, Inches(0.3), 9, MUTED, F_MED)
@@ -324,15 +350,15 @@ class Deck:
         for i, (name, q, pw) in enumerate(order):
             x = MX + i * (cw + gap); sol = sols.get(name, {})
             ess = sol.get("priority") == "Essencial"
-            self.rect(s, x, y, cw, ch, CARD_BLUE if ess else None, radius=0.08, line=None if ess else LINE)
-            self.pill(s, f"{i+1}", x + Inches(0.3), y + Inches(0.3), INK, None, WHITE, 8, F_MED, h=Inches(0.3), w=Inches(0.3), pad=Inches(0.05))
-            self.text(s, name, x + Inches(0.75), y + Inches(0.27), cw, Inches(0.4), 17, INK, F_REG)
+            self.rect(s, x, y, cw, ch, CARD if ess else None, radius=R_LG, line=None if ess else LINE_STRONG)
+            tile = self.rect(s, x + Inches(0.3), y + Inches(0.3), Inches(0.42), Inches(0.42), INK, radius=R_MD); tf = tile.text_frame; tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0; tf.vertical_anchor = MSO_ANCHOR.MIDDLE; self._run(tf.paragraphs[0], f"{i+1:02d}", 8, WHITE, F_SEMI, PP_ALIGN.CENTER)
+            self.text(s, name, x + Inches(0.85), y + Inches(0.3), cw, Inches(0.4), 17, INK, F_REG)
             self.mono(s, q, x + Inches(0.3), y + Inches(0.78), cw, 6, BLUE)
             if pw: self.mono(s, f"powered by {pw}", x + Inches(0.3), y + Inches(0.98), cw, 5.5, MUTED)
             how = sol.get("how", "")
             self.text(s, how, x + Inches(0.3), y + Inches(1.35), cw - Inches(0.5), Inches(1.3), 9.5, BODY, F_REG, line_spacing=1.35)
             pr = sol.get("priority")
-            if pr: self.pill(s, pr, x + Inches(0.3), y + ch - Inches(0.6), BLUE if ess else None, None if ess else LINE, WHITE if ess else BODY, 6, F_MONO, h=Inches(0.24))
+            if pr: self.pill(s, pr, x + Inches(0.3), y + ch - Inches(0.6), CARD_BLUE if ess else None, None if ess else LINE_STRONG, BLUE_DEEP if ess else BODY, 6, F_MONO, h=Inches(0.24))
         ds = sols.get("Demandshift")
         if ds and ds.get("priority") in ("Essencial", "Recomendado"):
             self.text(s, f"*Demandshift*  ·  {ds.get('how', '')}", MX, Inches(6.75), Inches(11.5), Inches(0.3), 9, BODY, F_REG)
@@ -354,8 +380,8 @@ class Deck:
 
     def closing(self):
         p = self.p
-        s = self.slide(True, "Próximos passos", "Próximos passos", "• FY26 Oficial")
-        self.text(s, p.get("closing_title") or "Do bolso à *rua*.", MX, Inches(1.6), Inches(11), Inches(1.2), 56, WHITE, F_LIGHT)
+        s = self.slide(True, "Próximos passos", "Próximos passos", "▪ FY26 Oficial")
+        self.text(s, p.get("closing_title") or "Do bolso à *rua*.", MX, Inches(1.6), Inches(11), Inches(1.2), 54, WHITE, F_LIGHT, spacing=TRACK_DISPLAY)
         self.text(s, p.get("closing_subtitle") or "O que precisamos para ativar e medir este plano.", MX, Inches(2.8), Inches(9), Inches(0.5), 15, SOFT, F_REG)
         y = Inches(3.9)
         for i, st in enumerate((p.get("next_steps") or [])[:4]):
@@ -373,7 +399,7 @@ class Deck:
 
     def build(self, out):
         p = self.p
-        max_cards = int(p.get("max_audience_cards", 8))
+        max_cards = int(p.get("max_audience_cards", 4))
         ranked = sorted(self.all_auds, key=lambda a: -(a.get("affinity") or 0))
         for i, a in enumerate(ranked): a.setdefault("rank", i + 1)
         cards = ranked[:max_cards]
