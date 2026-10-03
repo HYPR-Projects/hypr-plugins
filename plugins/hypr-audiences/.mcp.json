@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "hypr-audiences": {
+      "type": "http",
+      "url": "https://hypr-audiences-mcp.netlify.app/mcp"
+    }
+  }
+}
