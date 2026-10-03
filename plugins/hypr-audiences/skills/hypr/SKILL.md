@@ -1,6 +1,6 @@
 ---
 name: hypr
-description: Comando único do catálogo de audiências HYPR. Use when the user types "/hypr", "/hypr <termo>" or "/hypr plano <marca/campanha>", or asks "tem audiência de X na HYPR?", "volume de visitantes de Y", "monta um plano de audiências HYPR para Z".
+description: Comando único do catálogo de audiências HYPR. Use when the user types "/hypr", "/hypr seguido de um tema" or "/hypr plano seguido da marca ou campanha", or asks "tem audiência de X na HYPR?", "volume de visitantes de Y", "monta um plano de audiências HYPR para Z".
 ---
 
 # /hypr
