@@ -51,6 +51,11 @@ DECLINE, DECLINE_DEEP, DECLINE_SOFT = RGBColor(0xEA, 0x1E, 0x63), RGBColor(0xB4,
 YEAR = str(datetime.date.today().year)
 
 
+def E(v):
+    """Garante EMU inteiro (o PowerPoint rejeita coordenadas com casa decimal)."""
+    return Emu(int(round(v)))
+
+
 def fmt_vol(v, short=False):
     v = float(v or 0)
     if v >= 1e6:
@@ -102,7 +107,7 @@ class Deck:
         if align is not None: para.alignment = align
 
     def text(self, s, text, x, y, w, h, size, color, font=F_REG, align=None, lines=None, line_spacing=1.15, anchor=MSO_ANCHOR.TOP, spacing=None):
-        tb = s.shapes.add_textbox(x, y, w, h)
+        tb = s.shapes.add_textbox(E(x), E(y), E(w), E(h))
         tf = tb.text_frame; tf.word_wrap = True; tf.vertical_anchor = anchor
         tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
         for i, line in enumerate(lines if lines is not None else [text]):
@@ -115,6 +120,7 @@ class Deck:
         return self.text(s, text.upper(), x, y, w, h, size, color, F_MONO, align=align, spacing=0.6)
 
     def rect(self, s, x, y, w, h, fill, radius=None, line=None, lw=0.75):
+        x, y, w, h = E(x), E(y), E(w), E(h)
         shp = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE if radius else MSO_SHAPE.RECTANGLE, x, y, w, h)
         if radius:
             shp.adjustments[0] = min(0.5, Inches(radius) / min(w, h)) if radius > 0.5 else radius
@@ -126,7 +132,7 @@ class Deck:
         return shp
 
     def hline(self, s, x, y, w, color=LINE, pt=0.75):
-        ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, x, y, x + w, y)
+        ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, E(x), E(y), E(x + w), E(y))
         ln.line.color.rgb = color; ln.line.width = Pt(pt)
         return ln
 
@@ -152,7 +158,7 @@ class Deck:
         t = Inches(0.22); c = LINE_STRONG
         for (cx, cy, dx, dy) in [(x + Inches(0.3), y + Inches(0.3), 1, 1), (x + w - Inches(0.3), y + h - Inches(0.3), -1, -1)]:
             self.hline(s, cx if dx > 0 else cx - t, cy, t, c)
-            ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, cx, cy if dy > 0 else cy - t, cx, cy + t if dy > 0 else cy)
+            ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, E(cx), E(cy if dy > 0 else cy - t), E(cx), E(cy + t if dy > 0 else cy))
             ln.line.color.rgb = c; ln.line.width = Pt(0.75)
         self.mono(s, caption, x + Inches(0.3), y + h - Inches(0.6), w - Inches(0.6), 6, MUTED)
 
@@ -163,7 +169,7 @@ class Deck:
         fg = WHITE if dark else INK
         self.pill(s, tag, MX, MY, None, line=(MUTED_DARK if dark else LINE_STRONG), color=(SOFT if dark else INK), size=6, dot=True, h=Inches(0.24))
         logo = os.path.join(ASSETS, "hypr_white.png" if dark else "hypr_dark.png")
-        s.shapes.add_picture(logo, W - MX - Inches(1.0), MY + Inches(0.02), width=Inches(1.0))
+        s.shapes.add_picture(logo, E(W - MX - Inches(1.0)), E(MY + Inches(0.02)), width=E(Inches(1.0)))
         fl = footer_left or "▪ FY26 Oficial"
         fc = MUTED_DARK if dark else MUTED
         self.mono(s, fl, MX, H - MY - Inches(0.1), Inches(4), 5.5, fc)
@@ -259,7 +265,7 @@ class Deck:
         px, py, pw, ph = MX, Inches(1.3), Inches(4.9), Inches(5.35)
         img = a.get("image")
         if img and os.path.exists(img):
-            s.shapes.add_picture(img, px, py, width=pw, height=ph)
+            s.shapes.add_picture(img, E(px), E(py), width=E(pw), height=E(ph))
         else:
             self.figure_slot(s, px, py, pw, ph, a.get("image_caption") or f"[ {norm(a.get('sub_category') or 'foto').replace('&', '·')} · pdv ]")
         # coluna direita (slots 02 a 08 do contrato Audience Discovery)
@@ -396,6 +402,9 @@ class Deck:
             for shp in sl.shapes:
                 st = shp._element.find(qn("p:style"))
                 if st is not None: shp._element.remove(st)
+                for el in shp._element.iter(qn("a:off"), qn("a:ext")):
+                    for k, v in el.attrib.items():
+                        if "." in v: el.set(k, str(int(round(float(v)))))
 
     def build(self, out):
         p = self.p
