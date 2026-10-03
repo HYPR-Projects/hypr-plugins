@@ -4,11 +4,11 @@ Marketplace de plugins da [HYPR](https://hyprgrid.ai).
 
 ## Instalar
 
-**Claude (app):** em Plugins, adicione o marketplace `cesarmour/hypr-plugins` e instale **HYPR Audiences**.
+**Claude (app):** em Plugins, adicione o marketplace `HYPR-Projects/hypr-plugins` e instale **HYPR Audiences**.
 
 **Claude Code:**
 ```
-/plugin marketplace add cesarmour/hypr-plugins
+/plugin marketplace add HYPR-Projects/hypr-plugins
 /plugin install hypr-audiences@hypr
 ```
 
