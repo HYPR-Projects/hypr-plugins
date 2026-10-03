@@ -1,9 +1,5 @@
----
-name: plano-midia
-description: Monta um plano de audiências HYPR para uma marca ou campanha. Use when the user types "/plano-midia <marca/campanha>" or asks "monta um plano de audiências para X", "quais audiências HYPR recomendar para a campanha Y", "proposta de audiências para o cliente Z".
----
 
-# /plano-midia
+# Plano de audiências (/hypr plano)
 
 Argumento: marca e/ou campanha, com objetivo se houver (ex.: `Natura dia das mães`, `banco digital aquisição classe B`).
 

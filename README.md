@@ -16,7 +16,7 @@ Marketplace de plugins da [HYPR](https://hyprgrid.ai).
 
 | Plugin | O que faz |
 |---|---|
-| **hypr-audiences** | Catálogo de ~500 audiências de localização HYPR com volumetria. Comandos `/audiencias <termo>` e `/plano-midia <marca/campanha>`. |
+| **hypr-audiences** | Catálogo de ~500 audiências de localização HYPR com volumetria. Comando `/hypr <termo>` para buscar e `/hypr plano <marca/campanha>` para montar planos. |
 
 ## Atualizações
 
