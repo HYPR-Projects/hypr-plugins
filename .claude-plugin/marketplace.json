@@ -1,17 +1,31 @@
 {
   "name": "hypr",
-  "owner": { "name": "HYPR", "email": "cesar@hypr.mobi" },
-  "metadata": { "description": "Plugins oficiais da HYPR para Claude", "version": "0.2.0" },
+  "owner": {
+    "name": "HYPR",
+    "email": "cesar@hypr.mobi"
+  },
+  "metadata": {
+    "description": "Plugins oficiais da HYPR para Claude",
+    "version": "0.2.1"
+  },
   "plugins": [
     {
       "name": "hypr-audiences",
       "source": "./plugins/hypr-audiences",
       "description": "Catálogo de audiências de localização da HYPR: busca, volumetria e planos de audiência para anunciantes.",
-      "version": "0.2.0",
-      "author": { "name": "HYPR" },
+      "version": "0.2.1",
+      "author": {
+        "name": "HYPR"
+      },
       "homepage": "https://hyprgrid.ai",
       "category": "marketing",
-      "keywords": ["audiencias", "midia", "adtech", "location"]
+      "keywords": [
+        "audiencias",
+        "midia",
+        "adtech",
+        "location"
+      ],
+      "displayName": "HYPR Audiences"
     }
   ]
 }

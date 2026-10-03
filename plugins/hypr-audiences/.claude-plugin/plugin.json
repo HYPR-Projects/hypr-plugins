@@ -1,8 +1,19 @@
 {
   "name": "hypr-audiences",
-  "version": "0.2.0",
+  "displayName": "HYPR Audiences",
+  "version": "0.2.1",
   "description": "Catálogo de audiências de localização da HYPR: busca, volumetria e planos de audiência para anunciantes.",
-  "author": { "name": "HYPR", "email": "cesar@hypr.mobi" },
+  "author": {
+    "name": "HYPR",
+    "email": "cesar@hypr.mobi"
+  },
   "homepage": "https://hyprgrid.ai",
-  "keywords": ["hypr", "audiences", "audiencias", "midia", "location", "adtech"]
+  "keywords": [
+    "hypr",
+    "audiences",
+    "audiencias",
+    "midia",
+    "location",
+    "adtech"
+  ]
 }
