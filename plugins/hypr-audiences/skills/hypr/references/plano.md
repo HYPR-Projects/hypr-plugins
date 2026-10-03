@@ -12,7 +12,7 @@ Se precisar de mais opções num ângulo específico, complemente com `search_au
 
 O catálogo tem dois tipos de audiência (campo `type`):
 - **Location**: audiência de visitação, ativável como está (tem `addresses_count`).
-- **Custom** (`segment_name` com prefixo `LIB_`): audiência sob medida que o time HYPR já construiu em planos anteriores (Cluster Premium, Gated communities, Self Care, Frequent travelers…). O volume é a estimativa do plano original, a composição está na descrição e o time recria sob demanda a partir do Places Graph. No plano, marque essas com "(sob medida)" ao lado do nome e some no resumo quantas são.
+- **Custom** (`segment_name` com sufixo `_audience-library`): audiência sob medida que o time HYPR já construiu em planos anteriores (Cluster Premium, Gated communities, Self Care, Frequent travelers…). O volume é a estimativa do plano original, a composição está na descrição e o time recria sob demanda a partir do Places Graph. No plano, marque essas com "(sob medida)" ao lado do nome e some no resumo quantas são.
 
 A resposta traz três coisas além do ranking:
 - `vertical`: a vertical que o conector inferiu para o briefing. Se estiver errada ou nula, repita a chamada com `category` mais explícita.
