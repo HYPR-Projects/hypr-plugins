@@ -35,4 +35,5 @@ Para cada camada, uma tabela: Audiência | ID (`segment_name`) | Brand Affinity 
 
 Antes de entregar, revise o texto contra `../../planejamento-audiencias/references/marca.md`: nada de "programático", nada de bidIQ, HYPR em caixa alta, pilares em camelCase.
 
-Ao final, ofereça em uma linha exportar o plano como planilha ou deck.
+## 5. Deck
+Ao final, gere o deck resumo seguindo `deck.md` (padrão, sem perguntar).
