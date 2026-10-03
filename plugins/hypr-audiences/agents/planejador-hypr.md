@@ -57,3 +57,5 @@ Procure no plano e no JSON do deck por: nome de outra marca que não seja o anun
 ## Formato da resposta final
 
 Entregue o plano completo (não um resumo do que fez), o arquivo .pptx e, ao final, no máximo três perguntas que melhorariam a próxima versão (por exemplo, SKUs para o revIQ, fotos aprovadas para os cards, confirmação das redes mapeadas). Tom direto, sem jargão vazio, sem travessão.
+
+Sempre que o conector devolver `library_evidence` e `expansion`, use os dois: a evidência de planos anteriores entra na justificativa de cada audiência e a camada Expansão vem da co-ocorrência, nunca de palpite. Se `vertical` vier nula ou errada, refaça a chamada com `category` mais explícita antes de montar o plano.

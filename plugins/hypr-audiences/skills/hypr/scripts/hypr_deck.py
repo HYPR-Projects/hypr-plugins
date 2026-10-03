@@ -288,7 +288,7 @@ class Deck:
         if len(places) >= 3:
             stats = [(fmt_int(pl.get("n")), pl.get("l", "")) for pl in places[:3]]
         else:
-            stats = [(fmt_int(a.get("addresses")), "Endereços\nmapeados"), (f"{a.get('affinity', 0)}%", "Brand\nAffinity"), (f"#{a.get('rank', idx)}", f"no ranking\nde {len(self.all_auds)}")]
+            stats = [(fmt_int(a.get("addresses")), "Endereços\nmapeados"), (f"{a.get('affinity') or 0}%", "Brand\nAffinity"), (f"#{a.get('rank', idx)}", f"no ranking\nde {len(self.all_auds)}")]
         sw = Inches(2.1); sy = Inches(3.45)
         for i, (v, lab) in enumerate(stats):
             sx = x + i * sw
@@ -338,10 +338,13 @@ class Deck:
             self.text(s, a.get("layer", ""), cx + Inches(4.8), yy, Inches(1.6), Inches(0.25), 9, BODY, F_REG)
             self.text(s, fmt_vol(a.get("volume")), cx + Inches(6.4), yy, Inches(1.5), Inches(0.25), 9.5, INK, F_REG)
             self.text(s, fmt_int(a.get("addresses")), cx + Inches(7.9), yy, Inches(1.4), Inches(0.25), 9.5, INK, F_REG)
-            aff = max(0, min(100, a.get("affinity") or 0)); bw = Inches(1.6)
-            self.rect(s, cx + Inches(9.3), yy + Inches(0.07), bw, Inches(0.09), CARD, radius=0.5)
-            self.rect(s, cx + Inches(9.3), yy + Inches(0.07), max(Emu(1), int(bw * aff / 100)), Inches(0.09), BLUE if aff >= 75 else MUTED, radius=0.5)
-            self.text(s, f"{aff}%", cx + Inches(11.0), yy - Inches(0.01), Inches(0.6), Inches(0.25), 9.5, INK, F_MED)
+            if a.get("affinity") is None:
+                self.text(s, "base: planos anteriores", cx + Inches(9.3), yy, Inches(2.3), Inches(0.25), 8.5, MUTED, F_REG)
+            else:
+                aff = max(0, min(100, a.get("affinity") or 0)); bw = Inches(1.6)
+                self.rect(s, cx + Inches(9.3), yy + Inches(0.07), bw, Inches(0.09), CARD, radius=0.5)
+                self.rect(s, cx + Inches(9.3), yy + Inches(0.07), max(Emu(1), int(bw * aff / 100)), Inches(0.09), BLUE if aff >= 75 else MUTED, radius=0.5)
+                self.text(s, f"{aff}%", cx + Inches(11.0), yy - Inches(0.01), Inches(0.6), Inches(0.25), 9.5, INK, F_MED)
             y += rh
 
     def platform(self):

@@ -43,6 +43,7 @@ Salve `plano.json` com:
 
 Regras do JSON:
 - `affinity`, `volume`, `addresses`, `main_category`, `sub_category`, `brand` e `id` vêm exatamente do `rank_audiences` (`brand_affinity`, `audience_volume`, `addresses_count`, `segment_name`). Nunca invente números.
+- Quando a audiência tiver `library_evidence`, use um dos `hooks` para isso ("Validada em 13 planos de bancos" ou "Já usada com Itaú, Nubank e BTG"). Audiências vindas de `expansion` não têm affinity: use `affinity: null` e coloque o `why` de co-ocorrência no campo `why`.
 - O card de audiência segue o contrato do HYPR Design System (8 slots fixos). Se um dado não existir, o slot fica vazio; nunca troque por outra coisa.
 - `eixo` é enum fechado: Comportamento, Afinidade, Proximidade, Censitária, Mobilidade, Lifestyle. Se omitir, o script deriva da camada (Core/Conquista → Comportamento, Afinidade → Afinidade, Expansão → Lifestyle).
 - `places`: 3 contagens de endereços por tipo de lugar, só se você tiver os números (ex.: do briefing ou do cliente). Nunca invente. Sem `places`, o script mostra endereços mapeados, Brand Affinity e posição no ranking.
