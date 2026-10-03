@@ -5,7 +5,7 @@ description: This skill should be used when the user asks about HYPR audiences, 
 
 # Planejamento de audiências HYPR
 
-A HYPR é uma empresa brasileira de adtech e inteligência espacial. O catálogo tem cerca de 500 audiências de localização: grupos de pessoas que visitaram um conjunto de lugares físicos (redes de varejo, agências bancárias, postos, universidades etc.). A HYPR é privacy by design e não trabalha com dados pessoais identificáveis (PII). Nunca descrever a HYPR como "data provider".
+A HYPR é uma empresa brasileira de adtech e inteligência espacial. O catálogo tem cerca de 500 audiências de localização: grupos de pessoas que visitaram um conjunto de lugares físicos (redes de varejo, agências bancárias, postos, universidades etc.). A HYPR é infraestrutura de inteligência sobre o mundo físico. Antes de escrever qualquer texto para o usuário, siga `references/marca.md` (grafia, vocabulário, termos proibidos, clientes citáveis).
 
 ## Ferramentas do conector `hypr-audiences`
 
@@ -28,17 +28,16 @@ A taxonomia completa está em `references/taxonomia.md`. Use os nomes exatos del
 - Mostrar como porcentagem inteira (ex.: 87%). Faixas: Alta 75%+, Média 50 a 74%, Complementar abaixo de 50%.
 - Quanto mais completo o briefing (concorrentes, ocasiões, público), melhor o ranking. Se o resultado parecer genérico, peça 1 ou 2 dados que faltam.
 
-## Soluções HYPR
+## Plataforma HYPR
 
-Recomendar a partir de `hypr_solutions`, sempre conectando ao briefing:
-- **geoIQ**: inteligência de localização, ativa e analisa audiências a partir de visitas a lugares físicos.
-- **revIQ**: medição de resultado, conecta exposição a impacto em vendas e receita.
-- **bidIQ**: otimização da compra de mídia e dos lances para o melhor custo por resultado.
-- **adIQ**: inteligência de anúncios, mensagem e criativo por audiência.
-- **Groundflow**: infraestrutura de dados transacionais via notas fiscais, com mais de R$ 3,16 trilhões em GMV processado.
-- **Demandshift**: IA de análise de demanda, 350 milhões de notas fiscais e transações, mais de 500 categorias (FMCG, Auto, Real Estate, Upscale Retailers).
+Recomendar a partir de `hypr_solutions` e `platform_note` do `rank_audiences`, sempre conectando ao briefing:
+- **geoIQ** (onde), powered by Places Graph
+- **revIQ** (quanto), powered by Groundflow
+- **adsIQ** (com o quê), powered by Max Attention
+- **askIQ** (por quê)
+- **Demandshift** (onde está a demanda)
 
-Nunca usar a palavra "programática" (nem "programático"). Não citar parceiros, plataformas ou integrações de mídia pelo nome.
+Apresente os quatro IQs como um circuito único, não como produtos separados. Detalhes, mensuração e regras em `references/marca.md`.
 
 ## Regras de apresentação
 

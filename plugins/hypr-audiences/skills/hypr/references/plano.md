@@ -27,8 +27,12 @@ Para cada camada, uma tabela: Audiência | ID (`segment_name`) | Brand Affinity 
 
 **Resumo**: nº de audiências, afinidade média ponderada pelo volume, soma bruta de volume (avisar que há sobreposição).
 
-**Soluções HYPR recomendadas**: tabela a partir de `hypr_solutions`, só com prioridade Essencial e Recomendado, mais Opcional se o briefing pedir algo que só ele atende: Solução | Prioridade | Como ajuda neste caso (1 frase específica do briefing, partindo de `what_it_does` e `why`).
+**Plataforma HYPR para este plano**: abra com 1 a 2 frases do `platform_note` adaptadas ao briefing (o circuito onde, com o quê, quanto, por quê). Depois uma tabela a partir de `hypr_solutions`: Pilar | Powered by | Responde | Prioridade | Como ajuda neste caso (1 frase específica do briefing). Inclua os quatro IQs, mesmo os de prioridade Opcional, porque operam juntos; inclua Demandshift só se for Essencial ou Recomendado.
 
-**Próximos passos**: 3 itens curtos e concretos.
+**Como vamos medir**: 1 a 2 frases sobre grupo exposto vs. controle no revIQ, com incremento no SKU e na categoria do anunciante.
+
+**Próximos passos**: 3 itens curtos e concretos (ex.: validar praças no geoIQ, definir SKUs e categoria para leitura no revIQ, escolher formatos e canais do adsIQ).
+
+Antes de entregar, revise o texto contra `../../planejamento-audiencias/references/marca.md`: nada de "programático", nada de bidIQ, HYPR em caixa alta, pilares em camelCase.
 
 Ao final, ofereça em uma linha exportar o plano como planilha ou deck.
