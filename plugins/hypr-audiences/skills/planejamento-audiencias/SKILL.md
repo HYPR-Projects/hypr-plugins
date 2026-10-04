@@ -12,6 +12,7 @@ A HYPR é uma empresa brasileira de adtech e inteligência espacial. O catálogo
 - `search_audiences`: busca por palavras em nome, marca, categoria, keywords e descrição. Filtros: `main_category`, `sub_category`, `type`, `min_volume`. Ordenação: `relevance`, `volume_desc`, `volume_asc`. Use `include_description: false` para listas longas.
 - `rank_audiences`: recebe o briefing (brand, category, product, objective, target_audience, keywords, notes) e devolve audiências ranqueadas com `brand_affinity` (0 a 100%) e faixa Alta/Média/Complementar, mais `hypr_solutions` com as soluções HYPR recomendadas. Use sempre que houver uma marca ou campanha.
 - `list_categories`: categorias, subcategorias, nº de audiências e volume somado.
+- `estimate_overlap`, `build_deck`, `rate_plan`, `get_method`: usados no fluxo de plano; `get_method` devolve o método oficial vigente (fluxo, deck, marca) e deve ser lido antes de montar qualquer plano.
 
 A taxonomia completa está em `references/taxonomia.md`. Use os nomes exatos dela nos filtros.
 

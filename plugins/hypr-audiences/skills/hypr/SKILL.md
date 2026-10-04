@@ -8,7 +8,7 @@ description: Comando único do catálogo de audiências HYPR. Use when the user 
 Decida o modo pelo argumento:
 
 - **Sem argumento**: chame `list_categories`, mostre as categorias com nº de audiências e volume, e sugira 3 exemplos de uso: `/hypr pet`, `/hypr Financial Services`, `/hypr plano Natura dia das mães`.
-- **Começa com "plano"** (ou pede plano, proposta, recomendação para uma marca/campanha): delegue ao agente `planejador-hypr` com o resto do argumento como briefing. Ele roda o fluxo inteiro (`references/plano.md` e `references/deck.md`) e devolve plano + deck (o deck é gerado pelo conector via `build_deck`, sem dependências locais). Se o agente não estiver disponível, siga `references/plano.md` você mesmo.
+- **Começa com "plano"** (ou pede plano, proposta, recomendação para uma marca/campanha): delegue ao agente `planejador-hypr` com o resto do argumento como briefing. Ele chama `get_method` no conector, segue o método vigente e devolve plano + deck (gerado por `build_deck`). Se o agente não estiver disponível, chame `get_method` você mesmo e siga o método.
 - **Qualquer outro termo**: busca rápida, abaixo.
 
 ## Busca rápida
