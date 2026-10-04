@@ -347,6 +347,40 @@ class Deck:
                 self.text(s, f"{aff}%", cx + Inches(11.0), yy - Inches(0.01), Inches(0.6), Inches(0.25), 9.5, INK, F_MED)
             y += rh
 
+    def reach(self):
+        """Alcance único estimado vs. soma bruta, e pares com maior sobreposição (plan["overlap"])."""
+        p = self.p; ov = p.get("overlap") or {}
+        s = self.slide(False, "02 Audiências · Alcance", "Alcance único")
+        self.mono(s, "Soma bruta vs. alcance único estimado", MX, Inches(1.3), Inches(6), 6.5, MUTED)
+        self.text(s, p.get("reach_title") or "Quantas pessoas *de verdade*.", MX, Inches(1.55), Inches(10), Inches(0.8), 32, INK, F_LIGHT)
+        soma = ov.get("soma_bruta") or sum((a.get("volume") or 0) for a in self.all_auds)
+        uniq = ov.get("alcance_unico_estimado") or soma
+        fator = ov.get("fator_unico") or (uniq / soma if soma else 1)
+        # dois números
+        cw = Inches(3.5); y = Inches(2.7)
+        for i, (val, lab, sub, hi) in enumerate([(soma, "Soma bruta", "devices somados, com sobreposição", False), (uniq, "Alcance único estimado", f"{round(fator*100)}% da soma · {len(self.all_auds)} audiências", True)]):
+            x = MX + i * (cw + Inches(0.4))
+            self.rect(s, x, y, cw, Inches(2.1), CARD if hi else None, radius=R_LG, line=None if hi else LINE_STRONG)
+            self.text(s, "".join(fmt_vol(val, short=True)), x + Inches(0.35), y + Inches(0.3), cw, Inches(0.9), 40, BLUE_DEEP if hi else INK, F_LIGHT)
+            self.text(s, lab, x + Inches(0.35), y + Inches(1.2), cw, Inches(0.35), 12, INK, F_REG)
+            self.mono(s, sub, x + Inches(0.35), y + Inches(1.6), cw - Inches(0.5), 6, MUTED)
+        # pares
+        px = MX + 2 * (cw + Inches(0.4)) + Inches(0.2); pw = W - MX - px
+        self.mono(s, "Onde as audiências se sobrepõem", px, y, pw, 6.5, MUTED)
+        yy = y + Inches(0.35)
+        pares = (ov.get("pares_com_sobreposicao") or [])[:4]
+        short = lambda n: re.sub(r"^(Visitantes?|Visitors?) (d[aeo]s?|of) ", "", str(n or "")).replace(" (base 1)", "").replace(" (base 2)", "")
+        if not pares:
+            self.text(s, "Sem pares relevantes de sobreposição entre as audiências do plano.", px, yy, pw, Inches(0.6), 10, BODY, F_REG)
+        for pr in pares:
+            self.hline(s, px, yy, pw)
+            self.text(s, f"{short(pr.get('a'))}  ·  {short(pr.get('b'))}", px, yy + Inches(0.08), pw - Inches(0.9), Inches(0.5), 9, INK, F_REG, line_spacing=1.2)
+            self.text(s, "".join(fmt_vol(pr.get("sobreposicao_estimada"), short=True)), px + pw - Inches(0.8), yy + Inches(0.08), Inches(0.8), Inches(0.3), 9.5, BLUE_DEEP, F_MED, align=PP_ALIGN.RIGHT)
+            yy += Inches(0.6)
+        alerta = (ov.get("alerta") or [])[:1]
+        if alerta: self.text(s, short(alerta[0].split(" e ")[0]) + " e " + alerta[0].split(" e ", 1)[1] if " e " in alerta[0] else alerta[0], px, yy + Inches(0.1), pw, Inches(0.7), 8.5, BODY, F_REG, line_spacing=1.3)
+        self.mono(s, p.get("reach_note") or "Estimativa por composição das audiências (redes, subcategoria, descrição). A leitura real de sobreposição sai do Audience Overlap na plataforma HYPR.", MX, Inches(6.6), Inches(11.5), 6, MUTED)
+
     def platform(self):
         p = self.p
         sols = {x["solution"]: x for x in p.get("solutions", [])}
@@ -445,6 +479,7 @@ class Deck:
         per = 12
         chunks = [ranked[i:i + per] for i in range(0, len(ranked), per)]
         for ci, ch in enumerate(chunks): self.ranking_table(ch, f"{ci+1}/{len(chunks)}" if len(chunks) > 1 else None)
+        if p.get("overlap") or len(self.all_auds) >= 3: self.reach()
         n_ok = len([x for x in p.get("solutions", []) if x.get("solution") in ("geoIQ", "adsIQ", "revIQ", "askIQ") and x.get("applies", True) and x.get("priority") != "Não se aplica"]) or 4
         self.divider(3, "Plataforma", p.get("platform_sub") or ("Os quatro IQs em jogo e como cada um fecha o ciclo deste plano." if n_ok == 4 else f"Os {n_ok} pilares em jogo neste plano e como cada um fecha o ciclo."))
         self.platform(); self.measurement(); self.closing()

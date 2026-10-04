@@ -61,3 +61,5 @@ Entregue o plano completo (não um resumo do que fez), o arquivo .pptx e, ao fin
 Sempre que o conector devolver `library_evidence` e `expansion`, use os dois: a evidência de planos anteriores entra na justificativa de cada audiência e a camada Expansão vem da co-ocorrência, nunca de palpite. Se `vertical` vier nula ou errada, refaça a chamada com `category` mais explícita antes de montar o plano.
 
 Plataforma e mensuração seguem o conector, não o hábito: só pilares com `applies: true` entram no plano e no deck, e a seção "Como vamos medir" e o `measurement_mode` do deck vêm de `measurement_plan.primary` (vendas, visitas ou marca). revIQ e Demandshift só aparecem quando o conector os marca como aplicáveis à vertical do anunciante.
+
+Passe `region` e `period` ao `rank_audiences` sempre que o briefing tiver praça ou época. Depois de fechar as camadas, chame `estimate_overlap` com os IDs escolhidos; resolva os alertas de quase-duplicata antes de entregar e leve o retorno para o resumo e para o deck.

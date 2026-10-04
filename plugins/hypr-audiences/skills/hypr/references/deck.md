@@ -36,6 +36,7 @@ Salve `plano.json` com:
      }]}
   ],
   "solutions": [{"solution": "geoIQ", "priority": "Essencial", "applies": true, "how": "1 frase específica do briefing, até 140 caracteres"}],
+  "overlap": {"soma_bruta": 21869001, "alcance_unico_estimado": 19910399, "fator_unico": 0.91, "pares_com_sobreposicao": [{"a": "nome", "b": "nome", "sobreposicao_estimada": 293373}], "alerta": ["..."]},
   "measurement_mode": "vendas | visitas | marca  (= measurement_plan.primary.mode do rank_audiences)",
   "measurement_secondary": "opcional, 1 linha: leitura complementar (ex.: 'Leitura complementar: visitas incrementais às agências via geoIQ')",
   "next_steps": ["até 4 itens curtos"],
@@ -58,6 +59,8 @@ Regras do JSON:
 - Sem `image`, o slide reserva o espaço da foto como manda o DS: moldura hairline, raio 20 e legenda mono. Nunca peça para preencher com decoração; quem tem a foto aprovada coloca depois.
 - Cores de dado: verde só para boa notícia, rosa só para má notícia (favorabilidade, não direção). O ranking usa só ciano e neutros.
 - `solutions`: só os pilares com `applies: true` em `hypr_solutions` (priority diferente de "Não se aplica"). O slide de plataforma se adapta a 2, 3 ou 4 cards. Nunca inclua um pilar que o conector marcou como não aplicável (ex.: revIQ para banco, educação ou streaming), nem pilares internos. Inclua Demandshift só se Essencial ou Recomendado.
+- `overlap`: copie o retorno de `estimate_overlap` (chamado com os `segment_name` finais do plano). Gera o slide "Alcance único" depois do ranking, com soma bruta vs. alcance único estimado e os pares que mais se sobrepõem. Sem `overlap`, o slide usa só a soma dos volumes.
+- `praca` de cada audiência: use `praca.pracas_em_planos` ou a praça do briefing; nunca invente praça.
 - `measurement_mode` vem de `measurement_plan.primary.mode`: "vendas" (revIQ, nota fiscal), "visitas" (geoIQ, footfall incremental) ou "marca" (askIQ, brand lift). Título, texto e passos do slide mudam sozinhos conforme o modo; só sobrescreva `measurement_title`/`measurement`/`measurement_steps` se quiser personalizar. `platform_note` deve ser o `platform_note` devolvido pelo conector (já cita só os pilares aplicáveis).
 - As primeiras `max_audience_cards` audiências por affinity ganham slide próprio; todas entram no ranking.
 - Títulos opcionais (use *asteriscos* para a palavra em azul): `cover_title`, `cover_meta`, `context_title`, `layers_title`, `layers_sub`, `ranking_title`, `platform_title`, `platform_note`, `measurement_title`, `measurement`, `measurement_label`, `measurement_steps`, `measurement_secondary`, `closing_title`, `closing_subtitle`, `audiences_sub`, `platform_sub`, `context_sub`.
