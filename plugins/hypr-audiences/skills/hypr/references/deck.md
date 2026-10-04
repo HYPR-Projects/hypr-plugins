@@ -9,6 +9,7 @@ Salve `plano.json` com:
 
 ```json
 {
+  "plan_id": "plan_xxx (devolvido por rank_audiences; liga o deck ao plano)",
   "brand": "Natura",
   "campaign": "Dia das Mães 2027",
   "subtitle": "1 frase de capa (jornadas e audiências para ...).",

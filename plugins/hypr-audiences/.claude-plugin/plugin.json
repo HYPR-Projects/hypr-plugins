@@ -1,7 +1,7 @@
 {
   "name": "hypr-audiences",
   "displayName": "HYPR Audiences",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Catálogo de audiências de localização da HYPR: busca, volumetria e planos de audiência para anunciantes.",
   "author": {
     "name": "HYPR",

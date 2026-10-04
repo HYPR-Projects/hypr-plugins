@@ -49,3 +49,6 @@ Antes de entregar, revise o texto contra `../../planejamento-audiencias/referenc
 
 ## 5. Deck
 Ao final, gere o deck resumo seguindo `deck.md` (padrão, sem perguntar): monte o `plano.json` e chame `build_deck` no conector; entregue o link do .pptx.
+
+## 6. Avaliação
+Depois de entregar plano e deck, pergunte em uma linha: "O plano serviu? Nota de 1 a 5 e o que faltou, se faltou." Quando o usuário responder, chame `rate_plan` com `plan_id` (do `rank_audiences`), `nota`, `comentario`, `ajustes` e `brand`. Se o usuário já tiver pedido mudanças antes de responder, registre essas mudanças em `ajustes`. Não insista se não responder.

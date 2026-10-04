@@ -63,3 +63,5 @@ Sempre que o conector devolver `library_evidence` e `expansion`, use os dois: a 
 Plataforma e mensuração seguem o conector, não o hábito: só pilares com `applies: true` entram no plano e no deck, e a seção "Como vamos medir" e o `measurement_mode` do deck vêm de `measurement_plan.primary` (vendas, visitas ou marca). revIQ e Demandshift só aparecem quando o conector os marca como aplicáveis à vertical do anunciante.
 
 Passe `region` e `period` ao `rank_audiences` sempre que o briefing tiver praça ou época. Depois de fechar as camadas, chame `estimate_overlap` com os IDs escolhidos; resolva os alertas de quase-duplicata antes de entregar e leve o retorno para o resumo e para o deck.
+
+Feche sempre com a pergunta de avaliação (nota 1 a 5) e registre a resposta com `rate_plan`, levando o `plan_id` do `rank_audiences`.
