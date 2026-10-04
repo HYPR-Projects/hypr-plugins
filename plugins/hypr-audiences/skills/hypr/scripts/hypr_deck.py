@@ -351,11 +351,15 @@ class Deck:
         p = self.p
         sols = {x["solution"]: x for x in p.get("solutions", [])}
         s = self.slide(False, "03 Plataforma", "Core products")
-        self.mono(s, "Uma jornada · quatro IQs", MX, Inches(1.3), Inches(5), 6.5, MUTED)
+        order_all = [("geoIQ", "Onde", "Places Graph"), ("adsIQ", "Com o quê", "Max Attention"), ("revIQ", "Quanto", "Groundflow"), ("askIQ", "Por quê", None)]
+        # só os pilares que se aplicam ao caso (applies=False ou priority "Não se aplica" ficam fora)
+        order = [o for o in order_all if o[0] in sols and sols[o[0]].get("applies", True) and sols[o[0]].get("priority") != "Não se aplica"] or order_all
+        n = len(order)
+        self.mono(s, "Uma jornada · quatro IQs" if n == 4 else f"Uma jornada · {n} pilares", MX, Inches(1.3), Inches(5), 6.5, MUTED)
         self.text(s, p.get("platform_title") or "Como fecha o *ciclo*.", MX, Inches(1.55), Inches(10), Inches(0.8), 32, INK, F_LIGHT)
-        self.text(s, p.get("platform_note") or "Os quatro pilares rodam sobre a mesma base e se informam: o lugar orienta onde ativar, o formato garante atenção, a transação mostra se virou venda e a pesquisa explica o que ficou.", MX, Inches(2.4), Inches(9.5), Inches(0.7), 12, BODY, F_REG, line_spacing=1.35)
-        order = [("geoIQ", "Onde", "Places Graph"), ("adsIQ", "Com o quê", "Max Attention"), ("revIQ", "Quanto", "Groundflow"), ("askIQ", "Por quê", None)]
-        gap = Inches(0.25); cw = (W - 2 * MX - gap * 3) / 4; y, ch = Inches(3.45), Inches(3.2)
+        self.text(s, p.get("platform_note") or "Os pilares rodam sobre a mesma base e se informam: o lugar orienta onde ativar, o formato garante atenção e a pesquisa explica o que ficou.", MX, Inches(2.4), Inches(9.5), Inches(0.7), 12, BODY, F_REG, line_spacing=1.35)
+        gap = Inches(0.25); cw = (W - 2 * MX - gap * (n - 1)) / n; y, ch = Inches(3.45), Inches(3.2)
+        body_size = 9.5 if n == 4 else 10.5
         for i, (name, q, pw) in enumerate(order):
             x = MX + i * (cw + gap); sol = sols.get(name, {})
             ess = sol.get("priority") == "Essencial"
@@ -365,20 +369,34 @@ class Deck:
             self.mono(s, q, x + Inches(0.3), y + Inches(0.78), cw, 6, BLUE)
             if pw: self.mono(s, f"powered by {pw}", x + Inches(0.3), y + Inches(0.98), cw, 5.5, MUTED)
             how = sol.get("how", "")
-            self.text(s, how, x + Inches(0.3), y + Inches(1.35), cw - Inches(0.5), Inches(1.3), 9.5, BODY, F_REG, line_spacing=1.35)
+            self.text(s, how, x + Inches(0.3), y + Inches(1.35), cw - Inches(0.5), Inches(1.3), body_size, BODY, F_REG, line_spacing=1.35)
             pr = sol.get("priority")
             if pr: self.pill(s, pr, x + Inches(0.3), y + ch - Inches(0.6), CARD_BLUE if ess else None, None if ess else LINE_STRONG, BLUE_DEEP if ess else BODY, 6, F_MONO, h=Inches(0.24))
         ds = sols.get("Demandshift")
         if ds and ds.get("priority") in ("Essencial", "Recomendado"):
             self.text(s, f"*Demandshift*  ·  {ds.get('how', '')}", MX, Inches(6.75), Inches(11.5), Inches(0.3), 9, BODY, F_REG)
 
+    MEASUREMENT_MODES = {
+        "vendas": ("revIQ · powered by Groundflow", "A campanha virou *venda na loja*? E quanto.",
+                   "Comparamos o consumo nos pontos de venda das regiões expostas à campanha com regiões equivalentes não expostas, e medimos o incremento no SKU anunciado e na categoria.",
+                   [("Linha de base", "Vendas do SKU e da categoria antes do flight, região a região."), ("Exposto vs. controle", "Regiões impactadas comparadas a regiões equivalentes sem campanha."), ("Incremento", "A diferença entre os grupos é o efeito atribuível à mídia.")]),
+        "visitas": ("geoIQ · powered by Places Graph", "A campanha levou gente *até o ponto*? Quantas.",
+                    "Comparamos a taxa de visita aos pontos do anunciante entre os devices expostos à campanha e um grupo de controle equivalente não exposto, e medimos as visitas incrementais geradas pela mídia.",
+                    [("Linha de base", "Taxa de visita aos pontos do anunciante antes do flight, por audiência e praça."), ("Exposto vs. controle", "Devices impactados comparados a um grupo equivalente sem campanha."), ("Visitas incrementais", "A diferença entre os grupos é o tráfego atribuível à mídia, com custo por visita incremental.")]),
+        "marca": ("askIQ · Inteligência de Pesquisa", "A campanha mudou a *percepção da marca*?",
+                  "Perguntamos a quem foi efetivamente exposto e a um grupo de controle equivalente, e medimos a diferença em lembrança, consideração e intenção: o brand lift atribuível à campanha.",
+                  [("Pesquisa de base", "Questionário ao grupo de controle: lembrança, consideração e atributos da marca."), ("Exposto vs. controle", "O mesmo questionário aplicado a quem foi impactado pela campanha."), ("Brand lift", "A diferença entre os grupos é o efeito da mídia em cada métrica.")]),
+    }
+
     def measurement(self):
         p = self.p
+        mode = p.get("measurement_mode") or "vendas"
+        label, title, approach, steps_default = self.MEASUREMENT_MODES.get(mode, self.MEASUREMENT_MODES["vendas"])
         s = self.slide(False, "03 Plataforma · Mensuração", "Como provar")
-        self.mono(s, "revIQ · powered by Groundflow", MX, Inches(1.3), Inches(5), 6.5, MUTED)
-        self.text(s, p.get("measurement_title") or "A campanha virou *venda na loja*? E quanto.", MX, Inches(1.55), Inches(10), Inches(0.8), 32, INK, F_LIGHT)
-        self.text(s, p.get("measurement") or "Comparamos o consumo nos pontos de venda das regiões expostas à campanha com regiões equivalentes não expostas, e medimos o incremento no SKU anunciado e na categoria.", MX, Inches(2.5), Inches(5.6), Inches(1.6), 13, BODY, F_REG, line_spacing=1.4)
-        steps = p.get("measurement_steps") or [("Linha de base", "Vendas do SKU e da categoria antes do flight, região a região."), ("Exposto vs. controle", "Regiões impactadas comparadas a regiões equivalentes sem campanha."), ("Incremento", "A diferença entre os grupos é o efeito atribuível à mídia.")]
+        self.mono(s, p.get("measurement_label") or label, MX, Inches(1.3), Inches(5), 6.5, MUTED)
+        self.text(s, p.get("measurement_title") or title, MX, Inches(1.55), Inches(11.5), Inches(0.8), 32, INK, F_LIGHT)
+        self.text(s, p.get("measurement") or approach, MX, Inches(2.5), Inches(5.6), Inches(1.6), 13, BODY, F_REG, line_spacing=1.4)
+        steps = p.get("measurement_steps") or steps_default
         cw = (W - 2 * MX - Inches(0.8)) / 3; y = Inches(4.55)
         for i, (head, body) in enumerate(steps):
             x = MX + i * (cw + Inches(0.4))
@@ -386,6 +404,8 @@ class Deck:
             self.text(s, f"{i+1:02d}", x, y + Inches(0.25), Inches(1), Inches(0.5), 26, BLUE, F_LIGHT)
             self.text(s, head, x, y + Inches(0.85), cw, Inches(0.35), 13, INK, F_REG)
             self.text(s, body, x, y + Inches(1.2), cw - Inches(0.3), Inches(0.9), 9.5, BODY, F_REG, line_spacing=1.35)
+        if p.get("measurement_secondary"):
+            self.text(s, p["measurement_secondary"], MX, Inches(6.75), Inches(11.5), Inches(0.3), 9, MUTED, F_REG)
 
     def closing(self):
         p = self.p
@@ -415,7 +435,8 @@ class Deck:
         ranked = sorted(self.all_auds, key=lambda a: -(a.get("affinity") or 0))
         for i, a in enumerate(ranked): a.setdefault("rank", i + 1)
         cards = ranked[:max_cards]
-        sections = ["Contexto & desafio", "Audiências propostas", "Plataforma HYPR · como fecha o ciclo", "Mensuração · exposto vs. controle", "Próximos passos"]
+        mlabel = {"vendas": "Mensuração · venda incremental", "visitas": "Mensuração · visitas incrementais", "marca": "Mensuração · brand lift"}.get(p.get("measurement_mode") or "vendas", "Mensuração · exposto vs. controle")
+        sections = ["Contexto & desafio", "Audiências propostas", "Plataforma HYPR · como fecha o ciclo", mlabel, "Próximos passos"]
         self.cover(); self.summary(sections)
         self.divider(1, "Contexto", p.get("context_sub") or p.get("objective", "")); self.context()
         self.divider(2, "Audiências", p.get("audiences_sub") or f"{len(self.all_auds)} recortes para {p['brand']}, em {len(p['layers'])} camadas, ordenados por Brand Affinity.")
@@ -424,7 +445,8 @@ class Deck:
         per = 12
         chunks = [ranked[i:i + per] for i in range(0, len(ranked), per)]
         for ci, ch in enumerate(chunks): self.ranking_table(ch, f"{ci+1}/{len(chunks)}" if len(chunks) > 1 else None)
-        self.divider(3, "Plataforma", p.get("platform_sub") or "Os quatro IQs em jogo e como cada um fecha o ciclo deste plano.")
+        n_ok = len([x for x in p.get("solutions", []) if x.get("solution") in ("geoIQ", "adsIQ", "revIQ", "askIQ") and x.get("applies", True) and x.get("priority") != "Não se aplica"]) or 4
+        self.divider(3, "Plataforma", p.get("platform_sub") or ("Os quatro IQs em jogo e como cada um fecha o ciclo deste plano." if n_ok == 4 else f"Os {n_ok} pilares em jogo neste plano e como cada um fecha o ciclo."))
         self.platform(); self.measurement(); self.closing()
         self._clean(); self.prs.save(out); return out
 

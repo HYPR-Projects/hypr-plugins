@@ -35,7 +35,9 @@ Salve `plano.json` com:
        "image_caption": "opcional: legenda mono do espaço reservado, ex: [ perfumaria · pdv ]"
      }]}
   ],
-  "solutions": [{"solution": "geoIQ", "priority": "Essencial", "how": "1 frase específica do briefing, até 140 caracteres"}],
+  "solutions": [{"solution": "geoIQ", "priority": "Essencial", "applies": true, "how": "1 frase específica do briefing, até 140 caracteres"}],
+  "measurement_mode": "vendas | visitas | marca  (= measurement_plan.primary.mode do rank_audiences)",
+  "measurement_secondary": "opcional, 1 linha: leitura complementar (ex.: 'Leitura complementar: visitas incrementais às agências via geoIQ')",
   "next_steps": ["até 4 itens curtos"],
   "max_audience_cards": 8
 }
@@ -55,9 +57,10 @@ Regras do JSON:
 - Títulos em sentence case, com UMA palavra em ciano e ponto final. Sem exclamação, sem emoji, sem Title Case.
 - Sem `image`, o slide reserva o espaço da foto como manda o DS: moldura hairline, raio 20 e legenda mono. Nunca peça para preencher com decoração; quem tem a foto aprovada coloca depois.
 - Cores de dado: verde só para boa notícia, rosa só para má notícia (favorabilidade, não direção). O ranking usa só ciano e neutros.
-- `solutions` deve ter geoIQ, adsIQ, revIQ e askIQ; inclua Demandshift só se Essencial ou Recomendado. Nunca inclua pilares internos.
+- `solutions`: só os pilares com `applies: true` em `hypr_solutions` (priority diferente de "Não se aplica"). O slide de plataforma se adapta a 2, 3 ou 4 cards. Nunca inclua um pilar que o conector marcou como não aplicável (ex.: revIQ para banco, educação ou streaming), nem pilares internos. Inclua Demandshift só se Essencial ou Recomendado.
+- `measurement_mode` vem de `measurement_plan.primary.mode`: "vendas" (revIQ, nota fiscal), "visitas" (geoIQ, footfall incremental) ou "marca" (askIQ, brand lift). Título, texto e passos do slide mudam sozinhos conforme o modo; só sobrescreva `measurement_title`/`measurement`/`measurement_steps` se quiser personalizar. `platform_note` deve ser o `platform_note` devolvido pelo conector (já cita só os pilares aplicáveis).
 - As primeiras `max_audience_cards` audiências por affinity ganham slide próprio; todas entram no ranking.
-- Títulos opcionais (use *asteriscos* para a palavra em azul): `cover_title`, `cover_meta`, `context_title`, `layers_title`, `layers_sub`, `ranking_title`, `platform_title`, `platform_note`, `measurement_title`, `measurement`, `closing_title`, `closing_subtitle`, `audiences_sub`, `platform_sub`, `context_sub`.
+- Títulos opcionais (use *asteriscos* para a palavra em azul): `cover_title`, `cover_meta`, `context_title`, `layers_title`, `layers_sub`, `ranking_title`, `platform_title`, `platform_note`, `measurement_title`, `measurement`, `measurement_label`, `measurement_steps`, `measurement_secondary`, `closing_title`, `closing_subtitle`, `audiences_sub`, `platform_sub`, `context_sub`.
 - Siga `../planejamento-audiencias/references/marca.md` em todo texto.
 
 ## 2. Gerar

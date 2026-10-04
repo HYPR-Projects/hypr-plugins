@@ -36,9 +36,9 @@ Para cada camada, uma tabela: Audiência | ID (`segment_name`) | Brand Affinity 
 
 **Resumo**: nº de audiências, afinidade média ponderada pelo volume, soma bruta de volume (avisar que há sobreposição), e quantas das audiências do plano já foram validadas em planos anteriores da HYPR (contagem de itens com `library_evidence`).
 
-**Plataforma HYPR para este plano**: abra com 1 a 2 frases do `platform_note` adaptadas ao briefing (o circuito onde, com o quê, quanto, por quê). Depois uma tabela a partir de `hypr_solutions`: Pilar | Powered by | Responde | Prioridade | Como ajuda neste caso (1 frase específica do briefing). Inclua os quatro IQs, mesmo os de prioridade Opcional, porque operam juntos; inclua Demandshift só se for Essencial ou Recomendado.
+**Plataforma HYPR para este plano**: abra com 1 a 2 frases do `platform_note` adaptadas ao briefing. Depois uma tabela a partir de `hypr_solutions` só com os pilares `applies: true`: Pilar | Powered by | Responde | Prioridade | Como ajuda neste caso (1 frase específica do briefing). Inclua Demandshift só se for Essencial ou Recomendado. Os pilares com "Não se aplica" ficam fora da tabela; se um deles for revIQ ou Demandshift, encerre a seção com uma linha explicando por quê (o `why` do conector), para o cliente não esperar leitura de venda por nota fiscal onde ela não existe. Nunca recomende revIQ para bancos, educação, streaming, apostas, telecom ou viagens só por hábito: siga o conector.
 
-**Como vamos medir**: 1 a 2 frases sobre grupo exposto vs. controle no revIQ, com incremento no SKU e na categoria do anunciante.
+**Como vamos medir**: use `measurement_plan.primary`. Em 1 a 2 frases, descreva o método (`approach`) e os KPIs (`kpis`) do modo indicado: vendas (revIQ, incremento no SKU e na categoria), visitas (geoIQ, visitas incrementais aos pontos do anunciante) ou marca (askIQ, brand lift entre expostos). Se houver `secondary`, cite em meia frase como leitura complementar.
 
 **Próximos passos**: 3 itens curtos e concretos (ex.: validar praças no geoIQ, definir SKUs e categoria para leitura no revIQ, escolher formatos e canais do adsIQ).
 
