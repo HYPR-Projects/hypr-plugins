@@ -66,15 +66,19 @@ Regras do JSON:
 - Títulos opcionais (use *asteriscos* para a palavra em azul): `cover_title`, `cover_meta`, `context_title`, `layers_title`, `layers_sub`, `ranking_title`, `platform_title`, `platform_note`, `measurement_title`, `measurement`, `measurement_label`, `measurement_steps`, `measurement_secondary`, `closing_title`, `closing_subtitle`, `audiences_sub`, `platform_sub`, `context_sub`.
 - Siga `../planejamento-audiencias/references/marca.md` em todo texto.
 
-## 2. Gerar
-O script fica na pasta `scripts/` desta skill (mesmo diretório base do SKILL.md):
+## 2. Gerar (no servidor HYPR)
+O deck é gerado pelo próprio conector, então qualquer melhoria de layout vale na hora, sem atualizar o plugin. Duas formas, nesta ordem:
 
-```bash
-pip install python-pptx 2>/dev/null || pip install --break-system-packages python-pptx
-python3 <diretório-desta-skill>/scripts/hypr_deck.py plano.json "Plano HYPR - <Marca> - <Campanha>.pptx"
-```
+1. **Ferramenta `build_deck`** do conector HYPR Audiences: chame com `{"plan": <o JSON acima>}`. Ela devolve `download_url` (link do .pptx, válido por alguns dias), `filename` e `slides`. Funciona em qualquer cliente (Claude Code, Claude.ai, Cowork).
+2. **POST direto**, quando tiver shell e quiser o arquivo local (ex.: para anexar ou enviar junto do plano):
+   ```bash
+   curl -sS -X POST https://hypr-audiences-mcp.netlify.app/deck \
+     -H "content-type: application/json" --data-binary @plano.json \
+     -o "Plano HYPR - <Marca> - <Campanha>.pptx"
+   ```
+   Se a resposta for JSON em vez de arquivo, é erro de validação do plano: leia `error`, corrija o JSON e repita.
+
+Fallback offline (sem rede para o conector): `python3 <diretório-desta-skill>/scripts/hypr_deck.py plano.json saida.pptx` (requer `python-pptx`). Mesmo esquema de JSON.
 
 ## 3. Entregar
-Entregue o .pptx ao usuário como arquivo. Diga em uma linha que o deck usa as fontes Urbanist e IBM Plex Mono (as duas do HYPR Design System, gratuitas em fonts.google.com; sem elas o PowerPoint substitui por outras).
-
-Se o ambiente não permitir rodar Python (ex.: navegador), não gere o deck e ofereça entregar o JSON ou o plano em tabela.
+Entregue o link (ou o arquivo) ao usuário como o deck do plano. Diga em uma linha que o deck usa as fontes Urbanist e IBM Plex Mono (as duas do HYPR Design System, gratuitas em fonts.google.com; sem elas o PowerPoint substitui por outras).

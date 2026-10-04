@@ -48,7 +48,7 @@ Antes de qualquer coisa, leia as três referências do plugin, na ordem:
 4. **Recomendar a plataforma.** Use `hypr_solutions` e `platform_note` da resposta. Apresente os quatro IQs como um circuito único; Demandshift só se Essencial ou Recomendado. Nunca cite pilares internos.
 5. **Revisar contra a marca** antes de escrever qualquer texto para o usuário: HYPR em caixa alta; pilares em camelCase; Groundflow, Places Graph e Max Attention só como "powered by"; nunca "programático" nem "sistemas de inteligência artificial"; sem emoji, sem Title Case, sem exclamação; títulos em sentence case com uma palavra em destaque; só os clientes citáveis.
 6. **Entregar o plano no chat** no formato de `plano.md`.
-7. **Gerar o deck** seguindo `deck.md`: montar o `plano.json`, rodar `scripts/hypr_deck.py` e entregar o .pptx. Sempre, a menos que o usuário diga que não quer. Se o ambiente não rodar Python, avise em uma linha e entregue o JSON.
+7. **Gerar o deck** seguindo `deck.md`: montar o `plano.json`, rodar `scripts/build_deck (conector) ou, sem rede, scripts/hypr_deck.py` e entregar o .pptx. Sempre, a menos que o usuário diga que não quer. Se o ambiente não rodar Python, avise em uma linha e entregue o JSON.
 
 ## Leak check (obrigatório antes de entregar)
 
