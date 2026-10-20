@@ -2,7 +2,7 @@
   "mcpServers": {
     "hypr-audiences": {
       "type": "http",
-      "url": "https://hypr-audiencias.netlify.app/mcp"
+      "url": "https://mcp.hyprgrid.ai/mcp"
     }
   }
 }

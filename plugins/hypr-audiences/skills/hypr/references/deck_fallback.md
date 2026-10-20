@@ -75,7 +75,7 @@ O deck é gerado pelo próprio conector, então qualquer melhoria de layout vale
 1. **Ferramenta `build_deck`** do conector HYPR Audiences: chame com `{"plan": <o JSON acima>}`. Ela devolve `download_url` (link do .pptx, válido por alguns dias), `filename` e `slides`. Funciona em qualquer cliente (Claude Code, Claude.ai, Cowork).
 2. **POST direto**, quando tiver shell e quiser o arquivo local (ex.: para anexar ou enviar junto do plano):
    ```bash
-   curl -sS -X POST https://hypr-audiencias.netlify.app/deck \
+   curl -sS -X POST https://mcp.hyprgrid.ai/deck \
      -H "content-type: application/json" --data-binary @plano.json \
      -o "Plano HYPR - <Marca> - <Campanha>.pptx"
    ```
