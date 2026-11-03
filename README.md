@@ -1,95 +1,70 @@
-# HYPR Audiences para Claude
+# HYPR plugins para Claude (hypr-plugins)
 
-Consulte o catálogo de audiências da **HYPR** direto no Claude: busque audiências, veja volumes e monte planos para qualquer marca em segundos.
+> Mapa do projeto, no modelo de README da HYPR. O guia de instalação e uso para o time e para clientes está em [docs/README_ANTERIOR.md](docs/README_ANTERIOR.md).
+> Objetivo: uma pessoa nova, ou o assistente de IA, roda e ajusta o projeto sem perguntar a ninguém.
 
----
+## O que é
+Marketplace de plugins da HYPR para o Claude (app desktop e Claude Code). Hoje tem um plugin, **HYPR Audiences**: consulta o catálogo de audiências de localização da HYPR, mostra volumes e monta planos de audiência com deck para qualquer marca.
+Pilar: **geoIQ**.
 
-## Como instalar (2 minutos, uma vez só)
+O plugin é fino. A lógica e os dados ficam no conector MCP `hypr-audiences` (repo `HYPR-Projects/hypr-audiences-mcp`). Aqui ficam o comando `/hypr`, o agente `planejador-hypr` e a skill de conhecimento.
 
-**1. Abra o Claude** no computador (app desktop).
+> **Repositório público.** Tudo o que entrar aqui fica visível na internet. Não coloque nomes de clientes, links de planilha nem segredos.
 
-**2. Vá em Plugins** e escolha **Adicionar marketplace**.
+## Quem mantém
+Levantado de `git shortlog` dos últimos 90 dias.
+- Responsável: Cesar Moura (cesar@hypr.mobi; também commita como `Cesar` e `cesarmour`) (a confirmar)
+- Time: a definir
+- Substituto: a definir
 
-**3. Cole este endereço** e confirme:
+## Como rodar
+Instalar no app do Claude: Plugins → Adicionar marketplace → `HYPR-Projects/hypr-plugins` → instalar **HYPR Audiences**. No Claude Code:
 
+```text
+/plugin marketplace add HYPR-Projects/hypr-plugins
+/plugin install hypr-audiences@hypr
 ```
-HYPR-Projects/hypr-plugins
+
+Testar uma mudança local antes do push:
+
+```text
+/plugin marketplace add /caminho/para/o/clone/hypr-plugins
+/plugin install hypr-audiences@hypr
 ```
 
-**4. Instale o plugin.** Na lista, clique em **HYPR Audiences** e depois em **Instalar**. Se o Claude pedir para ativar o conector "hypr-audiences", aceite. Não precisa de login.
+- Uso: `/hypr` (categorias), `/hypr <tema>` (busca), `/hypr plano <marca e campanha>` (plano + deck).
+- Fallback do deck sem o conector: [hypr_deck.py](plugins/hypr-audiences/skills/hypr/scripts/hypr_deck.py) (`python3 hypr_deck.py plano.json saida.pptx`, precisa de `python-pptx`).
 
-Pronto. Novas versões chegam automaticamente.
+## Onde está no ar
+| Ambiente | Onde | URL | Como publica |
+|---|---|---|---|
+| produção | Marketplace `hypr` (este repo, branch `main`) | `HYPR-Projects/hypr-plugins` | push na `main` + subir o `version` em [plugin.json](plugins/hypr-audiences/.claude-plugin/plugin.json) e no [marketplace.json](.claude-plugin/marketplace.json) |
+| conector | Servidor MCP `hypr-audiences` (repo `hypr-audiences-mcp`, Vercel) | `https://mcp.hyprgrid.ai/mcp` | pelo repo do servidor, não por este |
 
-> Usa o Claude Code no terminal? Rode:
-> ```
-> /plugin marketplace add HYPR-Projects/hypr-plugins
-> /plugin install hypr-audiences@hypr
-> ```
+- Versão atual do plugin: `1.0.0`. O servidor MCP tem versão própria (`1.10.0` em 03/11/2026).
+- **Nome repetido:** o marketplace do repo `claude-analise-campanhas` também se chama `hypr`. Quem tem os dois pode ter conflito de nome (a confirmar qual prevalece).
 
----
+## Quais bases usa
+Este repo não lê base nenhuma: tudo passa pelo conector MCP.
 
-## Como usar
-
-Abra um **chat novo** e digite um destes comandos:
-
-| Você quer | Digite | Exemplo |
+| Base | Tabela | Lê / grava |
 |---|---|---|
-| Ver todas as categorias | `/hypr` | `/hypr` |
-| Buscar audiências | `/hypr <tema>` | `/hypr postos` |
-| Montar um plano para uma marca | `/hypr plano <marca e campanha>` | `/hypr plano Natura dia das mães` |
+| Google Sheets | planilha "Knowledge-audiences-HYPR" (catálogo; mudanças aparecem em até 1 min) | o conector lê |
+| BigQuery | HYPR Library (tags dos slides dos decks), compilada no servidor MCP | o conector lê |
 
-Também dá para perguntar normalmente, sem comando:
+Detalhe das fontes: no repo `hypr-audiences-mcp`.
 
-- *"Quais audiências da HYPR servem para uma marca de ração premium?"*
-- *"Qual o volume de visitantes de agências bancárias?"*
-- *"Monta um plano de audiências para um banco digital focado em aquisição."*
+## Segredos
+Nenhum. O conector é chamado sem login (`.mcp.json` só tem a URL). Os segredos do servidor moram no projeto Vercel do `hypr-audiences-mcp`.
 
----
+## Ajustes comuns
+- **Trocar o endereço do conector:** [.mcp.json](plugins/hypr-audiences/.mcp.json) e a URL em [deck.md](plugins/hypr-audiences/skills/hypr/references/deck.md).
+- **Comando `/hypr` (busca, categorias, plano):** [skills/hypr/SKILL.md](plugins/hypr-audiences/skills/hypr/SKILL.md).
+- **Fluxo do plano:** [agents/planejador-hypr.md](plugins/hypr-audiences/agents/planejador-hypr.md). O método vigente vem do conector (`get_method`); os arquivos `*_fallback.md` em [references/](plugins/hypr-audiences/skills/hypr/references/) só valem sem ele.
+- **Regras de marca e taxonomia:** [planejamento-audiencias/references/](plugins/hypr-audiences/skills/planejamento-audiencias/references/).
+- **Publicar:** suba o `version` nos dois manifestos; sem isso, quem já instalou não recebe.
 
-## O que você recebe
-
-**Na busca:** uma tabela com o nome da audiência, o ID para ativação, a categoria e o volume.
-
-**No plano:**
-
-- **Audiências em camadas:** Core, Conquista (clientes da concorrência), Afinidade e Expansão.
-- **Brand Affinity** de 0 a 100% em cada audiência, indicando o quanto ela combina com o seu briefing.
-- **Plataforma HYPR recomendada:** como geoIQ (onde), adsIQ (com o quê), revIQ (quanto) e askIQ (por quê) trabalham juntos no seu caso.
-- **Como medir:** comparação entre quem foi exposto e um grupo de controle, para mostrar o incremento de vendas na loja.
-
----
-
-## Dicas para um plano melhor
-
-Quanto mais contexto, melhor o resultado. Inclua no pedido:
-
-- **Marca e produto:** *"ração premium para gatos"*
-- **Objetivo:** awareness, vendas, lançamento ou conquistar clientes da concorrência
-- **Concorrentes:** *"vs. Royal Canin"*
-- **Público e praça:** *"classe AB, São Paulo"*
-
-Exemplo completo:
-
-```
-/hypr plano Premier Pet, ração premium para gatos, lançamento em SP, público classe AB, concorrente Royal Canin
-```
-
----
-
-## Perguntas frequentes
-
-**O comando `/hypr` não aparece.**
-Feche e abra o Claude, ou comece um chat novo.
-
-**Os dados estão atualizados?**
-Sim. O catálogo é atualizado pela HYPR e as mudanças aparecem em até 1 minuto, sem reinstalar nada.
-
-**O que é Brand Affinity?**
-Uma estimativa de quanto cada audiência combina com o seu briefing, calculada a partir do perfil de cada audiência no catálogo. Use para priorizar; o time HYPR valida o plano final.
-
-**Preciso pagar ou criar conta?**
-Não para consultar. Para ativar uma campanha, fale com a HYPR.
-
----
-
-**HYPR** · Do bolso à rua · [hyprgrid.ai](https://hyprgrid.ai)
+## Integrações
+- **HYPR Audiences MCP** (`mcp.hyprgrid.ai`): busca, ranking, plano, avaliação e deck (`search_audiences`, `list_categories`, `get_method`, `build_deck` e outras).
+- **App do ChatGPT:** o mesmo conector está sendo preparado como app do ChatGPT (a confirmar se já está publicado).
+- **Claude:** app desktop (Plugins) e Claude Code (`/plugin`).
